@@ -1,12 +1,11 @@
-// Backend
 const express = require('express');
-const fs = require('fs'); // For file system storage (replace with a database in real app)
+const fs = require('fs');
 const cors = require('cors');
 const app = express();
 
 const allowedOrigins = [
-    'https://aidendoescode.github.io', // Your frontend URL
-    'https://www.aidendoescode.github.io', // Your frontend URL (with www)
+    'https://aidendoescode.github.io',
+    'https://www.aidendoescode.github.io',
     'http://127.0.0.1:5500' // For local development
 ];
 
@@ -22,10 +21,24 @@ app.use(cors({
 
 app.use(express.json());
 
-let allClickData = []; // In-memory data storage (REPLACE WITH A DATABASE!)
+let allClickData = [];
+
+// Load data from file at server startup
+fs.readFile('clickData.txt', 'utf8', (err, data) => {
+    if (err) {
+        console.error("Error reading data from file (likely file doesn't exist):", err);
+    } else {
+        try {
+            allClickData = JSON.parse(data);
+            console.log("Data loaded from file at startup:", allClickData.length);
+        } catch (parseError) {
+            console.error("Error parsing data from file:", parseError);
+        }
+    }
+});
 
 app.get('/', (req, res) => {
-    res.json(allClickData); // Send all data as JSON
+    res.json(allClickData);
 });
 
 app.post('/', (req, res) => {
@@ -36,16 +49,14 @@ app.post('/', (req, res) => {
             return res.status(400).json({ message: "Invalid click data received. Expected an array." });
         }
 
-        console.log("Received newClickData:", newClickData);
+        allClickData.push(...newClickData); // Add new data
 
-        allClickData.push(...newClickData); // Add new data to existing data
+        const dataToSave = JSON.stringify(allClickData, null, 2);
 
-        const dataToSave = JSON.stringify(allClickData, null, 2); // Save all data (REPLACE WITH DATABASE)
-
-        fs.writeFile('clickData.txt', dataToSave, 'utf8', (err) => { // (REPLACE WITH DATABASE)
+        fs.writeFile('clickData.txt', dataToSave, 'utf8', (err) => {
             if (err) {
                 console.error("Error saving data:", err);
-                 return res.status(500).json({ message: "Error saving data" });
+                return res.status(500).json({ message: "Error saving data" });
             }
         });
 
