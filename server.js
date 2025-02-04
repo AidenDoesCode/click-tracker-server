@@ -3,14 +3,17 @@ const fs = require('fs');  // Or a database!
 const cors = require('cors');
 const app = express();
 
-const allowedOrigins = ['https://aidendoescode.github.io']; // *REPLACE WITH YOUR FRONTEND URL*
+const allowedOrigins = [
+    'https://aidendoescode.github.io', // Without www
+    'https://www.aidendoescode.github.io'  // With www
+];
 
 app.use(cors({
     origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
+        if (!origin || allowedOrigins.includes(origin) || allowedOrigins.some(allowedOrigin => origin && origin.startsWith(allowedOrigin))) {
+            callback(null, true); // Allow
         } else {
-            callback(new Error('Not allowed by CORS'));
+            callback(new Error('Not allowed by CORS')); // Block
         }
     }
 }));
