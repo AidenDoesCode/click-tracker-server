@@ -1,19 +1,41 @@
 const express = require('express');
-const fs = require('fs');
+const fs = require('fs');  // Or a database!
 const cors = require('cors');
-
 const app = express();
 
-// ✅ Allow requests from your frontend (Update this in production)
-app.use(cors())
+const allowedOrigins = ['https://aidendoescode.github.io']; // *REPLACE WITH YOUR FRONTEND URL*
 
-app.use(express.json());
+app.use(cors({
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    }
+}));
 
-app.post('https://click-tracker-server.onrender.com', (req, res) => {
-    const data = JSON.stringify(req.body, null, 2);
-    fs.writeFileSync('clickData.txt', data, 'utf8'); // Save to file
-    console.log("Click data received and saved!");
-    res.json({ message: "Data saved successfully" });
+app.use(express.json()); // Important: Parses JSON request bodies
+
+app.post('/', (req, res) => {  // Make sure the path matches the fetch URL!
+    const clickData = req.body; // Access the clickData array from req.body
+
+    if (!clickData || !Array.isArray(clickData)) { // Validate data
+        return res.status(400).json({ message: "Invalid click data received." });
+    }
+
+    const dataToSave = JSON.stringify(clickData, null, 2); // Format for saving
+
+    fs.writeFile('clickData.txt', dataToSave, 'utf8', (err) => { // Use async fs.writeFile
+        if (err) {
+            console.error("Error saving data:", err);
+            return res.status(500).json({ message: "Error saving data" });
+        } else {
+            console.log("Click data received and saved!");
+            return res.json({ message: "Data saved successfully" });
+        }
+    });
 });
 
-app.listen(3000, () => console.log('Server running on http://localhost:3000'));
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`Server running on port ${port}`));
