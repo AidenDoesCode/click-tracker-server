@@ -4,12 +4,12 @@ const cors = require('cors');
 
 const app = express();
 
-// Allow requests from your frontend (update if needed)
 app.use(cors({
-    origin: 'http://localhost:3000', // Allow all origins (Change this to your frontend domain in production)
+    origin: ['http://127.0.0.1:5500', 'http://localhost:3000', 'https://your-frontend-domain.com'], 
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type']
 }));
+
 
 app.use(express.json());
 
