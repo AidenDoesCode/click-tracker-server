@@ -6,7 +6,7 @@ const app = express();
 
 // ✅ Allow requests from your frontend (Update this in production)
 app.use(cors({
-    origin: '*', // Change to 'http://127.0.0.1:5500' for security in production
+    origin: 'http://127.0.0.1:5500/food-choices.html', // Change to 'http://127.0.0.1:5500' for security in production
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type']
 }));
