@@ -10,7 +10,7 @@ app.use(cors());  // Enable CORS for all domains (you can also specify domains)
 app.use(express.json());  // To parse incoming JSON data
 
 // POST route for saving click data
-app.post('/save-clicks', (req, res) => {
+app.post('https://click-tracker-server.onrender.com', (req, res) => {
     const clickData = req.body;  // Get the data from the frontend
 
     // Save to a file (you can modify this to save in a database if preferred)
