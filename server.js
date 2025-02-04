@@ -4,11 +4,7 @@ const cors = require('cors');
 
 const app = express();
 
-app.use(cors({
-    origin: ['http://127.0.0.1:5500', 'http://localhost:3000', 'https://your-frontend-domain.com'], 
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type']
-}));
+app.use(cors())
 
 
 app.use(express.json());
