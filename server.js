@@ -1,18 +1,19 @@
 const express = require('express');
 const fs = require('fs');
-const cors = require('cors');
+const cors = require('cors'); // Import CORS package
 
 const app = express();
-const PORT = process.env.PORT || 3000;  // Use Render's dynamic port or 3000 locally
+const PORT = process.env.PORT || 3000;
 
-app.use(cors());  // Enable CORS to allow requests from the frontend
-app.use(express.json());  // Parse incoming JSON data
+app.use(cors());  // Enable CORS for all domains (you can also specify domains)
+
+app.use(express.json());  // To parse incoming JSON data
 
 // POST route for saving click data
 app.post('/save-clicks', (req, res) => {
-    const clickData = req.body;  // Get the data sent from the frontend
+    const clickData = req.body;  // Get the data from the frontend
 
-    // Save the data to a file (you can modify this for a database)
+    // Save to a file (you can modify this to save in a database if preferred)
     fs.appendFile('clicks.json', JSON.stringify(clickData) + '\n', (err) => {
         if (err) {
             return res.status(500).json({ message: 'Error saving data' });
