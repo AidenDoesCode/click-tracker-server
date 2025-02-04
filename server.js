@@ -6,7 +6,7 @@ const app = express();
 
 // Allow requests from your frontend (update if needed)
 app.use(cors({
-    origin: '*', // Allow all origins (Change this to your frontend domain in production)
+    origin: 'http://localhost:3000', // Allow all origins (Change this to your frontend domain in production)
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type']
 }));
