@@ -18,9 +18,13 @@ app.use(cors({
     }
 }));
 
+app.get('/', (req, res) => {
+    res.redirect('/food-choices'); // Redirect to another path if you have one
+});
+
 app.use(express.json()); // Important: Parses JSON request bodies
 
-app.post('/food-choices', (req, res) => {  // Make sure the path matches the fetch URL!
+app.post('/', (req, res) => {  // Make sure the path matches the fetch URL!
     const clickData = req.body; // Access the clickData array from req.body
 
     if (!clickData || !Array.isArray(clickData)) { // Validate data
