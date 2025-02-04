@@ -1,12 +1,13 @@
+// Backend
 const express = require('express');
-const fs = require('fs');
+const fs = require('fs'); // For file system storage (replace with a database in real app)
 const cors = require('cors');
 const app = express();
 
 const allowedOrigins = [
-    'https://aidendoescode.github.io',
-    'https://www.aidendoescode.github.io',
-    'http://127.0.0.1:5500'
+    'https://aidendoescode.github.io', // Your frontend URL
+    'https://www.aidendoescode.github.io', // Your frontend URL (with www)
+    'http://127.0.0.1:5500' // For local development
 ];
 
 app.use(cors({
@@ -21,33 +22,35 @@ app.use(cors({
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.send("Welcome to the click data server. Send POST requests to / to submit data."); // Or just remove this if you don't need a GET route
-});
+let allClickData = []; // In-memory data storage (REPLACE WITH A DATABASE!)
 
+app.get('/', (req, res) => {
+    res.json(allClickData); // Send all data as JSON
+});
 
 app.post('/', (req, res) => {
     try {
-        const clickData = req.body;
+        const newClickData = req.body;
 
-        if (!clickData || !Array.isArray(clickData)) {
-            console.error("Invalid click data received:", clickData);
+        if (!newClickData || !Array.isArray(newClickData)) {
             return res.status(400).json({ message: "Invalid click data received. Expected an array." });
         }
 
-        console.log("Received clickData:", clickData);
+        console.log("Received newClickData:", newClickData);
 
-        const dataToSave = JSON.stringify(clickData, null, 2);
+        allClickData.push(...newClickData); // Add new data to existing data
 
-        fs.writeFile('clickData.txt', dataToSave, 'utf8', (err) => {
+        const dataToSave = JSON.stringify(allClickData, null, 2); // Save all data (REPLACE WITH DATABASE)
+
+        fs.writeFile('clickData.txt', dataToSave, 'utf8', (err) => { // (REPLACE WITH DATABASE)
             if (err) {
                 console.error("Error saving data:", err);
-                return res.status(500).json({ message: "Error saving data" });
-            } else {
-                console.log("Click data saved successfully!");
-                return res.status(200).json({ message: "Data saved successfully" });
+                 return res.status(500).json({ message: "Error saving data" });
             }
         });
+
+        res.status(200).json({ message: "Data saved and updated successfully", allData: allClickData });
+
     } catch (error) {
         console.error("Error processing request:", error);
         return res.status(500).json({ message: "An error occurred" });
